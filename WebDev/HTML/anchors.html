@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Archors</title>
+    </head>
+
+    <body>
+        <h1 id="start">Here's a bunch of anchors.</h1>
+        <p>
+            <a
+                href="/simple-page.html"
+                title="you should see this when hovering your cursor"
+            >
+                This is a relative link to the hello page.
+            </a>
+            <br />
+            <a
+                href="/simple-page.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                {{/*  the rel is for security  */}}
+            >
+                This link will open in a new tab.
+            </a>
+            <br />
+            <a href="https://archlinux.org" rel="external">This is an absolute link to an external website.</a>
+            <br />
+            <a href="#end">This link connects to the end of this page.</a>
+        </p>
+        <p>Fun fact: <code>href<code/> stands for <code>hypertext reference<code/>
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            and then
+        </p>
+        <h2 id="end">This is the end of the page.</h2>
+        <br />
+        And you can also go back to the <a href="#start">start</a>.
+    </body>
+</html>

@@ -1,0 +1,9 @@
+{
+    "java.project.sourcePaths": [
+        "HW1"
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/Users/sichanghe/Documents/Java files/algs4.jar"
+    ]
+}

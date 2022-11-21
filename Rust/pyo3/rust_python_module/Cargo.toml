@@ -1,0 +1,11 @@
+[package]
+name = "rust_python_module"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "rust_sort"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.16.3", features = ["macros", "extension-module"]}

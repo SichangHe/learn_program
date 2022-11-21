@@ -1,0 +1,12 @@
+```{R}
+print("Hello world!");
+```
+```{R}
+haha<-read.csv("data.csv")
+library(ggplot2)
+ggplot(haha,aes(x = a, y = b))+
+    geom_point()+
+    geom_smooth()+
+    ggtitle("Sichang's 4k screen")
+
+```

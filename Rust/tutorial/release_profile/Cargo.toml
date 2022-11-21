@@ -1,0 +1,12 @@
+[package]
+name = "release_profile"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[profile.dev] # the profile for testing compilation
+opt-level = 1 # default is 0, max is 3, which is the release default
+
+
+[dependencies]

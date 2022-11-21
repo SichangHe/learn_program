@@ -1,0 +1,14 @@
+set dotenv-load
+
+watch sample:
+    watchexec -e rs -r -w ./{{sample}} just run {{sample}}
+
+run sample: (build sample "--target wasm32-wasi")
+    wagi -c modules.toml --log-dir ./logs
+
+run-native sample:
+    cd {{justfile_directory()}}/{{sample}}; cargo run
+
+build sample target:
+    cd {{justfile_directory()}}/{{sample}}; cargo b {{target}}
+    
