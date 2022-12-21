@@ -1,6 +1,29 @@
 defmodule FirstMix.Registry do
   use GenServer
 
+  @doc """
+  Start the registry.
+  """
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, :ok, opts)
+  end
+
+  @doc """
+  Look up the PID for the bucket corresponding to `name`.
+  """
+  @spec lookup(pid(), String.t()) :: {:ok, pid()} | :error
+  def lookup(server, name) do
+    GenServer.call(server, {:lookup, name})
+  end
+
+  @doc """
+  Create a bucket named `name` if it does not exist.
+  """
+  @spec create(pid(), String.t()) :: :ok
+  def create(server, name) do
+    GenServer.cast(server, {:create, name})
+  end
+
   @impl true
   def init(:ok) do
     {:ok, %{}}

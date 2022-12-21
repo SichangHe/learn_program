@@ -31,12 +31,19 @@ end
 
 defmodule FirstMixTest.RegistryTest do
   use ExUnit.Case, async: true
+  import FirstMix.Registry
 
-  test "Make the `shopping` registry" do
-    {:ok, registry} = GenServer.start_link(FirstMix.Registry, :ok)
-    GenServer.cast(registry, {:create, "shopping"})
-    {:ok, bk} = GenServer.call(registry, {:lookup, "shopping"})
+  setup do
+    registry = start_supervised!(FirstMix.Registry)
+    %{registry: registry}
+  end
+
+  test "Make the `shopping` bucket", %{registry: registry} do
+    assert lookup(registry, "shopping") == :error
+    create(registry, "shopping")
+    assert {:ok, bk} = lookup(registry, "shopping")
     assert bk |> is_pid()
-    assert GenServer.call(registry, {:lookup, "DNE"}) == :error
+    FirstMix.Bucket.put(bk, "milk", 1)
+    assert FirstMix.Bucket.get(bk, "milk") == 1
   end
 end
