@@ -28,3 +28,15 @@ defmodule FirstMix.BucketTest do
     assert get(bucket, "milk") == nil
   end
 end
+
+defmodule FirstMixTest.RegistryTest do
+  use ExUnit.Case, async: true
+
+  test "Make the `shopping` registry" do
+    {:ok, registry} = GenServer.start_link(FirstMix.Registry, :ok)
+    GenServer.cast(registry, {:create, "shopping"})
+    {:ok, bk} = GenServer.call(registry, {:lookup, "shopping"})
+    assert bk |> is_pid()
+    assert GenServer.call(registry, {:lookup, "DNE"}) == :error
+  end
+end
