@@ -1,5 +1,8 @@
 defmodule FirstMix.Registry do
   use GenServer
+  require Logger
+
+  defstruct names: %{}, refs: %{}
 
   @doc """
   Start the registry.
@@ -26,21 +29,39 @@ defmodule FirstMix.Registry do
 
   @impl true
   def init(:ok) do
-    {:ok, %{}}
+    {:ok, %FirstMix.Registry{}}
   end
 
   @impl true
-  def handle_call({:lookup, name}, _from, names) do
-    {:reply, Map.fetch(names, name), names}
+  def handle_call({:lookup, name}, _from, state) do
+    {:reply, Map.fetch(state.names, name), state}
   end
 
   @impl true
-  def handle_cast({:create, name}, names) do
-    if Map.has_key?(names, name) do
-      {:noreply, names}
+  def handle_cast({:create, name}, state) do
+    if Map.has_key?(state.names, name) do
+      {:noreply, state}
     else
       {:ok, bucket} = FirstMix.Bucket.start_link([])
-      {:noreply, Map.put(names, name, bucket)}
+      ref = Process.monitor(bucket)
+
+      {:noreply,
+       %FirstMix.Registry{
+         names: state.names |> Map.put(name, bucket),
+         refs: state.refs |> Map.put(ref, name)
+       }}
     end
+  end
+
+  @impl true
+  def handle_info({:DOWN, ref, :process, _pid, _reason}, state) do
+    {name, refs} = Map.pop(state.refs, ref)
+    {:noreply, %FirstMix.Registry{names: state.names |> Map.delete(name), refs: refs}}
+  end
+
+  @impl true
+  def handle_info(msg, state) do
+    Logger.debug("Unexpected message in FirstMix.Registry: #{inspect(msg)}")
+    {:noreply, state}
   end
 end

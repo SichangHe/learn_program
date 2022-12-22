@@ -46,4 +46,11 @@ defmodule FirstMixTest.RegistryTest do
     FirstMix.Bucket.put(bk, "milk", 1)
     assert FirstMix.Bucket.get(bk, "milk") == 1
   end
+
+  test "Remove bucket on exit", %{registry: registry} do
+    create(registry, "shopping")
+    assert {:ok, bk} = lookup(registry, "shopping")
+    Agent.stop(bk)
+    assert lookup(registry, "shopping") == :error
+  end
 end
