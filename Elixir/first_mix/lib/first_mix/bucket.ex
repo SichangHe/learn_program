@@ -1,5 +1,5 @@
 defmodule FirstMix.Bucket do
-  use Agent
+  use Agent, restart: :temporary
 
   @doc """
   Start a new bucket.

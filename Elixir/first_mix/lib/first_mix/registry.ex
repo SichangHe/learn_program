@@ -42,7 +42,7 @@ defmodule FirstMix.Registry do
     if Map.has_key?(state.names, name) do
       {:noreply, state}
     else
-      {:ok, bucket} = FirstMix.Bucket.start_link([])
+      {:ok, bucket} = DynamicSupervisor.start_child(FirstMix.BucketSupervisor, FirstMix.Bucket)
       ref = Process.monitor(bucket)
 
       {:noreply,

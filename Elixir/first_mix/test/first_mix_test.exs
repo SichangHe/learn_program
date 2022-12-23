@@ -48,4 +48,11 @@ defmodule FirstMixTest.RegistryTest do
     Agent.stop(bk)
     assert lookup(FirstMix.Registry, "shopping") == :error
   end
+
+  test "Remove bucket on crash" do
+    create(FirstMix.Registry, "shopping")
+    assert {:ok, bk} = lookup(FirstMix.Registry, "shopping")
+    Agent.stop(bk, :shutdown)
+    assert lookup(FirstMix.Registry, "shopping") == :error
+  end
 end

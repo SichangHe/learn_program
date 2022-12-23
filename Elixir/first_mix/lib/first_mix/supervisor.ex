@@ -7,7 +7,10 @@ defmodule FirstMix.Supervisor do
 
   @impl true
   def init(:ok) do
-    [{FirstMix.Registry, name: FirstMix.Registry}]
-    |> Supervisor.init(strategy: :one_for_one)
+    [
+      {DynamicSupervisor, name: FirstMix.BucketSupervisor, strategy: :one_for_one},
+      {FirstMix.Registry, name: FirstMix.Registry}
+    ]
+    |> Supervisor.init(strategy: :one_for_all)
   end
 end
