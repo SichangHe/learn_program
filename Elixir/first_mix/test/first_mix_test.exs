@@ -33,24 +33,19 @@ defmodule FirstMixTest.RegistryTest do
   use ExUnit.Case, async: true
   import FirstMix.Registry
 
-  setup do
-    registry = start_supervised!(FirstMix.Registry)
-    %{registry: registry}
-  end
-
-  test "Make the `shopping` bucket", %{registry: registry} do
-    assert lookup(registry, "shopping") == :error
-    create(registry, "shopping")
-    assert {:ok, bk} = lookup(registry, "shopping")
+  test "Make the `shopping` bucket" do
+    assert lookup(FirstMix.Registry, "shopping") == :error
+    create(FirstMix.Registry, "shopping")
+    assert {:ok, bk} = lookup(FirstMix.Registry, "shopping")
     assert bk |> is_pid()
     FirstMix.Bucket.put(bk, "milk", 1)
     assert FirstMix.Bucket.get(bk, "milk") == 1
   end
 
-  test "Remove bucket on exit", %{registry: registry} do
-    create(registry, "shopping")
-    assert {:ok, bk} = lookup(registry, "shopping")
+  test "Remove bucket on exit" do
+    create(FirstMix.Registry, "shopping")
+    assert {:ok, bk} = lookup(FirstMix.Registry, "shopping")
     Agent.stop(bk)
-    assert lookup(registry, "shopping") == :error
+    assert lookup(FirstMix.Registry, "shopping") == :error
   end
 end
