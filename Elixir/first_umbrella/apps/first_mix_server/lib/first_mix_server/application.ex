@@ -7,9 +7,15 @@ defmodule FirstMixServer.Application do
 
   @impl true
   def start(_type, _args) do
+    port =
+      case System.get_env("PORT") do
+        nil -> 4040
+        port -> port |> String.to_integer()
+      end
+
     children = [
-      # Starts a worker by calling: FirstMixServer.Worker.start_link(arg)
-      # {FirstMixServer.Worker, arg}
+      {Task.Supervisor, name: FirstMixServer.TaskSupervisor},
+      {Task, fn -> FirstMixServer.accept(port) end}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
