@@ -16,6 +16,7 @@ defmodule FirstMixServer.Application do
     children = [
       {Task.Supervisor, name: FirstMixServer.TaskSupervisor},
       {Task, fn -> FirstMixServer.accept(port) end}
+      |> Supervisor.child_spec(restart: :permanent)
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
