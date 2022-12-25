@@ -43,16 +43,18 @@ defmodule FirstMixTest.RegistryTest do
   end
 
   test "Remove bucket on exit" do
-    create(FirstMix.Registry, "shopping")
-    assert {:ok, bk} = lookup(FirstMix.Registry, "shopping")
+    create(FirstMix.Registry, "exit")
+    assert {:ok, bk} = lookup(FirstMix.Registry, "exit")
     Agent.stop(bk)
-    assert lookup(FirstMix.Registry, "shopping") == :error
+    create(FirstMix.Registry, "sync call to ensure deletion finished")
+    assert lookup(FirstMix.Registry, "exit") == :error
   end
 
   test "Remove bucket on crash" do
-    create(FirstMix.Registry, "shopping")
-    assert {:ok, bk} = lookup(FirstMix.Registry, "shopping")
+    create(FirstMix.Registry, "crash")
+    assert {:ok, bk} = lookup(FirstMix.Registry, "crash")
     Agent.stop(bk, :shutdown)
-    assert lookup(FirstMix.Registry, "shopping") == :error
+    create(FirstMix.Registry, "sync call to ensure deletion finished")
+    assert lookup(FirstMix.Registry, "crash") == :error
   end
 end

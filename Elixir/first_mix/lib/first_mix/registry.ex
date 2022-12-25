@@ -5,10 +5,12 @@ defmodule FirstMix.Registry do
   defstruct names: %{}, refs: %{}
 
   @doc """
-  Start the registry.
+  Start the registry with the given options, where `:name` is required.
   """
+  @spec start_link(name: String.t(), atom: String.t()) :: GenServer.on_start()
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, :ok, opts)
+    server = Keyword.fetch!(opts, :name)
+    GenServer.start_link(__MODULE__, server, opts)
   end
 
   @doc """
@@ -16,7 +18,10 @@ defmodule FirstMix.Registry do
   """
   @spec lookup(pid(), String.t()) :: {:ok, pid()} | :error
   def lookup(server, name) do
-    GenServer.call(server, {:lookup, name})
+    case :ets.lookup(server, name) do
+      [{^name, pid}] -> {:ok, pid}
+      [] -> :error
+    end
   end
 
   @doc """
@@ -24,39 +29,38 @@ defmodule FirstMix.Registry do
   """
   @spec create(pid(), String.t()) :: :ok
   def create(server, name) do
-    GenServer.cast(server, {:create, name})
+    GenServer.call(server, {:create, name})
   end
 
   @impl true
-  def init(:ok) do
-    {:ok, %FirstMix.Registry{}}
+  def init(table) do
+    {:ok, %FirstMix.Registry{names: :ets.new(table, [:named_table, read_concurrency: true])}}
   end
 
   @impl true
-  def handle_call({:lookup, name}, _from, state) do
-    {:reply, Map.fetch(state.names, name), state}
-  end
+  def handle_call({:create, name}, _from, state) do
+    case lookup(state.names, name) do
+      {:ok, bucket} ->
+        {:reply, bucket, state}
 
-  @impl true
-  def handle_cast({:create, name}, state) do
-    if Map.has_key?(state.names, name) do
-      {:noreply, state}
-    else
-      {:ok, bucket} = DynamicSupervisor.start_child(FirstMix.BucketSupervisor, FirstMix.Bucket)
-      ref = Process.monitor(bucket)
+      :error ->
+        {:ok, bucket} = DynamicSupervisor.start_child(FirstMix.BucketSupervisor, FirstMix.Bucket)
+        ref = Process.monitor(bucket)
+        :ets.insert(state.names, {name, bucket})
 
-      {:noreply,
-       %FirstMix.Registry{
-         names: state.names |> Map.put(name, bucket),
-         refs: state.refs |> Map.put(ref, name)
-       }}
+        {:reply, bucket,
+         %FirstMix.Registry{
+           state
+           | refs: state.refs |> Map.put(ref, name)
+         }}
     end
   end
 
   @impl true
   def handle_info({:DOWN, ref, :process, _pid, _reason}, state) do
     {name, refs} = Map.pop(state.refs, ref)
-    {:noreply, %FirstMix.Registry{names: state.names |> Map.delete(name), refs: refs}}
+    :ets.delete(state.names, name)
+    {:noreply, %FirstMix.Registry{state | refs: refs}}
   end
 
   @impl true
