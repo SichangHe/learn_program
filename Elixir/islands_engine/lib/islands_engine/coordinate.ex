@@ -9,11 +9,10 @@ defmodule IslandsEngine.Coordinate do
 
   @board_range 1..10
 
-  @spec new(1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10, 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10) ::
-          %Coordinate{
-            row: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
-            col: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
-          }
+  @spec new(integer, integer) :: {:ok, Coordinate} | {:error, :invalid_coordinate}
   def new(row, col) when row in @board_range and col in @board_range,
-    do: %Coordinate{row: row, col: col}
+    do: {:ok, %Coordinate{row: row, col: col}}
+
+  def new(row, col) when row |> is_integer() and col |> is_integer(),
+    do: {:error, :invalid_coordinate}
 end

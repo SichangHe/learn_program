@@ -12,13 +12,13 @@ defmodule IslandsEngineTest.Coordinate do
   alias IslandsEngine.Coordinate
 
   test "Type safety of the Coordinate struct" do
-    assert %Coordinate{row: 1, col: 1} = Coordinate.new(1, 1)
-    Coordinate.new(0, 1) |> catch_error()
+    assert {:ok, %Coordinate{row: 1, col: 1}} = Coordinate.new(1, 1)
+    assert {:error, :invalid_coordinate} = Coordinate.new(0, 1)
     Coordinate.new("a", 1) |> catch_error()
-    Coordinate.new(11, 1) |> catch_error()
-    Coordinate.new(1, -1) |> catch_error()
+    assert {:error, :invalid_coordinate} = Coordinate.new(11, 1)
+    assert {:error, :invalid_coordinate} = Coordinate.new(1, -1)
     Coordinate.new(1, "a") |> catch_error()
-    Coordinate.new(1, 11) |> catch_error()
+    assert {:error, :invalid_coordinate} = Coordinate.new(1, 11)
     Coordinate.new(1.0, 1) |> catch_error()
   end
 end
@@ -29,8 +29,22 @@ defmodule IslandsEngineTest.Guesses do
 
   test "Create and insert guesses" do
     guesses = Guesses.new()
-    coord1 = Coordinate.new(1, 1)
+    {:ok, coord1} = Coordinate.new(1, 1)
     guesses = update_in(guesses.hits, &MapSet.put(&1, coord1))
     assert coord1 in guesses.hits
+  end
+end
+
+defmodule IslandsEngineTest.Island do
+  use ExUnit.Case
+  alias IslandsEngine.{Coordinate, Island}
+
+  test "Create islands" do
+    {:ok, upper_left} = Coordinate.new(1, 1)
+    {:ok, lower_left} = Coordinate.new(9, 1)
+    assert {:ok, _} = Island.new(:square, upper_left)
+    assert {:ok, _} = Island.new(:l_shape, upper_left)
+    assert {:error, :invalid_island_type} = Island.new(:unknown, upper_left)
+    assert {:error, :invalid_coordinate} = Island.new(:l_shape, lower_left)
   end
 end
