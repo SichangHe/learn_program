@@ -30,7 +30,7 @@ defmodule IslandsEngineTest.Guesses do
   test "Create and insert guesses" do
     guesses = Guesses.new()
     {:ok, coord1} = Coordinate.new(1, 1)
-    guesses = update_in(guesses.hits, &MapSet.put(&1, coord1))
+    guesses = Guesses.add(guesses, :hit, coord1)
     assert coord1 in guesses.hits
   end
 end
