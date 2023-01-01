@@ -7,6 +7,9 @@ defmodule IslandsEngine.Island do
   @type island_type_error :: {:error, :invalid_island_type}
   @type t :: %Island{coordinates: Coordinate.s(), hit_coordinates: MapSet.t(Coordinate.t())}
 
+  @spec types() :: [atom]
+  def types(), do: [:atoll, :dot, :l_shape, :s_shape, :square]
+
   @spec new(atom, Coordinate.t()) :: {:ok, t} | {:error, atom}
   def new(type, upper_left) do
     with [_ | _] = offsets <- offset(type),
