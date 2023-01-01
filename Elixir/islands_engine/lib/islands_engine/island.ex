@@ -43,6 +43,18 @@ defmodule IslandsEngine.Island do
   end
 
   @spec disjoint?(t, t) :: boolean
-  def disjoint?(%Island{} = existing, %Island{} = new),
+  def disjoint?(existing, new),
     do: MapSet.disjoint?(existing.coordinates, new.coordinates)
+
+  @spec guess(t, Coordinate.t()) :: {:hit, t} | :miss
+  def guess(island, coordinate) do
+    if MapSet.member?(island.coordinates, coordinate) do
+      {:hit, %Island{island | hit_coordinates: MapSet.put(island.hit_coordinates, coordinate)}}
+    else
+      :miss
+    end
+  end
+
+  @spec forested?(t) :: boolean
+  def forested?(island), do: MapSet.equal?(island.coordinates, island.hit_coordinates)
 end

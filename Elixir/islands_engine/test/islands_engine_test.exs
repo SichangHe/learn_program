@@ -48,7 +48,7 @@ defmodule IslandsEngineTest.Island do
     assert {:error, :invalid_coordinate} = Island.new(:l_shape, lower_left)
   end
 
-  test "Detect islands disjoint" do
+  test "Detect islands disjoint and forested" do
     {:ok, upper_left} = Coordinate.new(1, 1)
     {:ok, upper_second_left} = Coordinate.new(1, 2)
     {:ok, center} = Coordinate.new(5, 5)
@@ -58,5 +58,10 @@ defmodule IslandsEngineTest.Island do
     assert not Island.disjoint?(square, dot)
     assert Island.disjoint?(square, ell)
     assert Island.disjoint?(dot, ell)
+
+    assert :miss = Island.guess(dot, upper_left)
+    assert not Island.forested?(dot)
+    assert {:hit, dot} = Island.guess(dot, upper_second_left)
+    assert Island.forested?(dot)
   end
 end
