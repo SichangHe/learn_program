@@ -24,11 +24,14 @@ end
 
 defmodule IslandsEngine.Game.Server do
   use GenServer
-  alias IslandsEngine.Rules
+  alias IslandsEngine.{Board, Coordinate, Rules, Island}
   alias IslandsEngine.Game.{Player, State}
 
-  @type call :: {:add_player, String.t()}
-  @type reply_content :: :ok | :error
+  @type call ::
+          {:add_player, String.t()}
+          | {:position_island, :player1 | :player2, atom, non_neg_integer, non_neg_integer}
+  @type reply_content ::
+          :ok | :error | {:error, :invalid_coordinate} | {:error, :invalid_island_type}
 
   @spec init(String.t()) :: {:ok, State.t()}
   def init(name), do: {:ok, %State{player1: %Player{name: name}}}
@@ -42,6 +45,19 @@ defmodule IslandsEngine.Game.Server do
     end
   end
 
+  def handle_call({:position_island, player, key, row, col}, _from, state) do
+    with {:ok, rules} <- Rules.check(state.rules, {:position_islands, player}),
+         {:ok, coord} <- Coordinate.new(row, col),
+         {:ok, island} <- Island.new(key, coord),
+         %{} = board <- Board.position_island(player_board(state, player), key, island) do
+      state |> update_board(player, board) |> update_rules(rules) |> reply_with(:ok)
+    else
+      error
+      when error in [:error, {:error, :invalid_coordinate}, {:error, :invalid_island_type}] ->
+        reply_with(state, error)
+    end
+  end
+
   @spec update_player2_name(State.t(), String.t()) :: State.t()
   defp update_player2_name(state, name), do: put_in(state.player2.name, name)
 
@@ -50,6 +66,12 @@ defmodule IslandsEngine.Game.Server do
 
   @spec reply_with(State.t(), reply_content) :: {:reply, reply_content, State.t()}
   defp reply_with(state, reply), do: {:reply, reply, state}
+
+  @spec player_board(State.t(), :player1 | :player2) :: Board.t()
+  defp player_board(state, player), do: Map.get(state, player).board
+
+  @spec update_board(State.t(), :player1 | :player2, Board.t()) :: State.t()
+  defp update_board(state, player, board), do: Map.update!(state, player, &%{&1 | board: board})
 end
 
 defmodule IslandsEngine.Game do
@@ -60,4 +82,9 @@ defmodule IslandsEngine.Game do
 
   @spec add_player(pid, String.t()) :: :ok
   def add_player(game, name) when is_binary(name), do: GenServer.call(game, {:add_player, name})
+
+  @spec position_island(pid, :player1 | :player2, atom, non_neg_integer, non_neg_integer) :: any
+  def position_island(game, player, key, row, col) when player in [:player1, :player2] do
+    GenServer.call(game, {:position_island, player, key, row, col})
+  end
 end
