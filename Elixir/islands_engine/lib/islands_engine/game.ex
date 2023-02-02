@@ -29,7 +29,7 @@ defmodule IslandsEngine.Game.Server do
 
   @type call ::
           {:add_player, String.t()}
-          | {:position_island, :player1 | :player2, atom, non_neg_integer, non_neg_integer}
+          | {:position_island, :player1 | :player2, atom, pos_integer, pos_integer}
   @type reply_content ::
           :ok | :error | {:error, :invalid_coordinate} | {:error, :invalid_island_type}
 
@@ -83,7 +83,8 @@ defmodule IslandsEngine.Game do
   @spec add_player(pid, String.t()) :: :ok
   def add_player(game, name) when is_binary(name), do: GenServer.call(game, {:add_player, name})
 
-  @spec position_island(pid, :player1 | :player2, atom, non_neg_integer, non_neg_integer) :: any
+  @spec position_island(pid, :player1 | :player2, atom, pos_integer, pos_integer) ::
+          Server.reply_content()
   def position_island(game, player, key, row, col) when player in [:player1, :player2] do
     GenServer.call(game, {:position_island, player, key, row, col})
   end

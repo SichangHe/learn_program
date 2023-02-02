@@ -8,10 +8,10 @@ defmodule IslandsEngine.Coordinate do
   defstruct [:row, :col]
 
   @board_range 1..10
-  @type t :: %Coordinate{row: integer, col: integer}
+  @type t :: %Coordinate{row: pos_integer, col: pos_integer}
   @type s :: MapSet.t(t)
 
-  @spec new(integer, integer) :: {:ok, t} | {:error, :invalid_coordinate}
+  @spec new(pos_integer, pos_integer) :: {:ok, t} | {:error, :invalid_coordinate}
   def new(row, col) when row in @board_range and col in @board_range,
     do: {:ok, %Coordinate{row: row, col: col}}
 
