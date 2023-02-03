@@ -24,8 +24,8 @@ defmodule IslandsEngine.Game.State do
 end
 
 defmodule IslandsEngine.Game.Server do
-  use GenServer
-  alias IslandsEngine.{Board, Coordinate, Guesses, Rules, Island}
+  use GenServer, restart: :transient
+  alias IslandsEngine.{Board, Coordinate, Game, Guesses, Rules, Island}
   alias IslandsEngine.Game.{Player, State}
 
   @type call ::
@@ -42,6 +42,10 @@ defmodule IslandsEngine.Game.Server do
           add_player_reply | position_island_reply | set_islands_reply | guess_coord_reply
   @spec init(String.t()) :: {:ok, State.t()}
   def init(name), do: {:ok, %State{player1: %Player{name: name}}}
+
+  @spec start_link(String.t()) :: GenServer.on_start()
+  def start_link(name) when is_binary(name),
+    do: GenServer.start_link(__MODULE__, name, name: Game.via_tuple(name))
 
   @spec handle_call(call, any, State.t()) :: {:reply, reply_content, State.t()}
   def handle_call({:add_player, name}, _from, state) do
@@ -127,9 +131,6 @@ defmodule IslandsEngine.Game do
   @players [:player1, :player2]
 
   @type game :: pid | {:via, Registry, {Registry.Game, String.t()}}
-
-  @spec start_link(String.t()) :: GenServer.on_start()
-  def start_link(name) when is_binary(name), do: GenServer.start_link(Server, name)
 
   @spec add_player(game, String.t()) :: Server.add_player_reply()
   def add_player(game, name) when is_binary(name), do: GenServer.call(game, {:add_player, name})

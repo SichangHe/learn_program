@@ -3,7 +3,7 @@ defmodule IslandsEngineTest.Game do
   alias IslandsEngine.Game
 
   test "Walk through" do
-    assert {:ok, game} = Game.start_link("Frank")
+    assert {:ok, game} = Game.Server.start_link("Frank")
     assert :error = Game.guess_coordinate(game, :player1, 1, 1)
     p2 = "Dweezil"
     assert :ok = Game.add_player(game, p2)
