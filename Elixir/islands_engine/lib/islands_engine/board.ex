@@ -39,8 +39,10 @@ defmodule IslandsEngine.Board do
 
   @spec guess_response({atom, Island.t()} | :miss, t) ::
           {:hit | :miss, atom, :win | :no_win, t}
-  defp guess_response({key, island}, board),
-    do: {:hit, forest_check(board, key), win_check(board), %{board | key => island}}
+  defp guess_response({key, island}, board) do
+    board = %{board | key => island}
+    {:hit, forest_check(board, key), win_check(board), board}
+  end
 
   defp guess_response(:miss, board), do: {:miss, :none, :no_win, board}
 
