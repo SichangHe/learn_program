@@ -126,23 +126,28 @@ defmodule IslandsEngine.Game do
 
   @players [:player1, :player2]
 
+  @type game :: pid | {:via, Registry, {Registry.Game, String.t()}}
+
   @spec start_link(String.t()) :: GenServer.on_start()
   def start_link(name) when is_binary(name), do: GenServer.start_link(Server, name)
 
-  @spec add_player(pid, String.t()) :: Server.add_player_reply()
+  @spec add_player(game, String.t()) :: Server.add_player_reply()
   def add_player(game, name) when is_binary(name), do: GenServer.call(game, {:add_player, name})
 
-  @spec position_island(pid, State.players(), atom, pos_integer, pos_integer) ::
+  @spec position_island(game, State.players(), atom, pos_integer, pos_integer) ::
           Server.position_island_reply()
   def position_island(game, player, key, row, col) when player in @players,
     do: GenServer.call(game, {:position_island, player, key, row, col})
 
-  @spec set_islands(pid, State.players()) :: Server.set_islands_reply()
+  @spec set_islands(game, State.players()) :: Server.set_islands_reply()
   def set_islands(game, player) when player in @players,
     do: GenServer.call(game, {:set_islands, player})
 
-  @spec guess_coordinate(pid, State.players(), pos_integer, pos_integer) ::
+  @spec guess_coordinate(game, State.players(), pos_integer, pos_integer) ::
           Server.guess_coord_reply()
   def guess_coordinate(game, player, row, col) when player in @players,
     do: GenServer.call(game, {:guess_coordinate, player, row, col})
+
+  @spec via_tuple(String.t()) :: {:via, Registry, {Registry.Game, String.t()}}
+  def via_tuple(name), do: {:via, Registry, {Registry.Game, name}}
 end

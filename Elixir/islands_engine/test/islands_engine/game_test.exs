@@ -56,4 +56,12 @@ defmodule IslandsEngineTest.Game do
 
     assert {:hit, :dot, :win} = Game.guess_coordinate(game, :player2, 1, 1)
   end
+
+  test "Via tuple" do
+    name = "Lena"
+    via = Game.via_tuple(name)
+    assert {:ok, pid} = GenServer.start_link(Game.Server, name, name: via)
+    assert %{} = :sys.get_state(via)
+    assert {:error, {:already_started, ^pid}} = GenServer.start_link(Game.Server, name, name: via)
+  end
 end
