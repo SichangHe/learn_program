@@ -43,8 +43,12 @@ defmodule IslandsEngine.Game.Server do
           {:hit | :miss, atom, :win | :no_win} | :error | {:error, :invalid_coordinate}
   @type reply_content ::
           add_player_reply | position_island_reply | set_islands_reply | guess_coord_reply
-  @spec init(String.t()) :: {:ok, State.t(), non_neg_integer}
-  def init(name), do: {:ok, %State{player1: %Player{name: name}}, @timeout}
+
+  @spec init(String.t()) :: {:ok, State.t()}
+  def init(name) do
+    send(self(), {:set_state, name})
+    {:ok, %State{player1: %Player{name: name}}}
+  end
 
   @spec start_link(String.t()) :: GenServer.on_start()
   def start_link(name) when is_binary(name),
@@ -53,7 +57,7 @@ defmodule IslandsEngine.Game.Server do
   @spec handle_call(call, any, State.t()) :: {:reply, reply_content, State.t(), non_neg_integer}
   def handle_call({:add_player, name}, _from, state) do
     with {:ok, rules} <- Rules.check(state.rules, :add_player) do
-      state |> update_player2_name(name) |> update_rules(rules) |> reply_with(:ok)
+      state |> update_player2_name(name) |> update_rules(rules) |> update_ets() |> reply_with(:ok)
     else
       :error -> reply_with(state, :error)
     end
@@ -64,7 +68,11 @@ defmodule IslandsEngine.Game.Server do
          {:ok, coord} <- Coordinate.new(row, col),
          {:ok, island} <- Island.new(key, coord),
          %{} = board <- Board.position_island(player_board(state, player), key, island) do
-      state |> update_board(player, board) |> update_rules(rules) |> reply_with(:ok)
+      state
+      |> update_board(player, board)
+      |> update_rules(rules)
+      |> update_ets()
+      |> reply_with(:ok)
     else
       error
       when error in [:error, {:error, :invalid_coordinate}, {:error, :invalid_island_type}] ->
@@ -77,7 +85,7 @@ defmodule IslandsEngine.Game.Server do
 
     with {:ok, rules} <- Rules.check(state.rules, {:set_islands, player}),
          true <- Board.all_islands_positioned?(board) do
-      state |> update_rules(rules) |> reply_with({:ok, board})
+      state |> update_rules(rules) |> update_ets() |> reply_with({:ok, board})
     else
       :error -> reply_with(state, :error)
       false -> reply_with(state, {:error, :not_all_islands_positioned})
@@ -96,15 +104,29 @@ defmodule IslandsEngine.Game.Server do
       |> update_board(opponent, oppnent_board)
       |> update_guesses(player, hit_miss, coord)
       |> update_rules(rules)
+      |> update_ets()
       |> reply_with({hit_miss, forested_island, win_no_win})
     else
       error when error in [:error, {:error, :invalid_coordinate}] -> reply_with(state, error)
     end
   end
 
-  @spec handle_info(:timeout, State.t()) :: {:stop, {:shutdown, :timeout}, State.t()}
+  @type info :: :timeout | {:set_state, String.t()}
+  @type timeout_reply :: {:stop, {:shutdown, :timeout}, State.t()}
+  @type set_state_reply :: {:noreply, State.t(), non_neg_integer}
+  @type info_reply :: timeout_reply | set_state_reply
+
+  @spec handle_info(info, State.t()) :: timeout_reply
   def handle_info(:timeout, state) do
     {:stop, {:shutdown, :timeout}, state}
+  end
+
+  def handle_info({:set_state, name}, state) do
+    {:noreply,
+     case :ets.lookup(:game_state, name) do
+       [] -> state
+       [{^name, old_state}] -> old_state
+     end, @timeout}
   end
 
   @spec update_player2_name(State.t(), String.t()) :: State.t()
@@ -112,6 +134,12 @@ defmodule IslandsEngine.Game.Server do
 
   @spec update_rules(State.t(), Rules.t()) :: State.t()
   defp update_rules(state, rules), do: %State{state | rules: rules}
+
+  @spec update_ets(State.t()) :: State.t()
+  defp update_ets(state) do
+    :ets.insert(:game_state, {state.player1.name, state})
+    state
+  end
 
   @spec reply_with(State.t(), reply_content) ::
           {:reply, reply_content, State.t(), non_neg_integer}

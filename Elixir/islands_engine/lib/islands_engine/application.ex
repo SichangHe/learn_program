@@ -7,6 +7,8 @@ defmodule IslandsEngine.Application do
 
   @impl true
   def start(_type, _args) do
+    :ets.new(:game_state, [:public, :named_table])
+
     children = [
       # Starts a worker by calling: IslandsEngine.Worker.start_link(arg)
       # {IslandsEngine.Worker, arg}
