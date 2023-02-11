@@ -6,7 +6,7 @@ defmodule IslandsEngine.GameSupervisor do
   def start_link(_opt), do: DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)
 
   @spec start_game(String.t()) :: {:ok, pid}
-  def start_game(name), do: DynamicSupervisor.start_child(__MODULE__, {Game, name})
+  def start_game(name), do: DynamicSupervisor.start_child(__MODULE__, {Game.Server, name})
 
   @spec stop_game(String.t()) :: :ok | {:error, :not_found}
   def stop_game(name), do: DynamicSupervisor.terminate_child(__MODULE__, pid_from_name(name))

@@ -28,6 +28,9 @@ defmodule IslandsEngine.Game.Server do
   alias IslandsEngine.{Board, Coordinate, Game, Guesses, Rules, Island}
   alias IslandsEngine.Game.{Player, State}
 
+  # 2min
+  @timeout 2 * 60 * 1000
+
   @type call ::
           {:add_player, String.t()}
           | {:position_island, State.players(), atom, pos_integer, pos_integer}
@@ -40,14 +43,14 @@ defmodule IslandsEngine.Game.Server do
           {:hit | :miss, atom, :win | :no_win} | :error | {:error, :invalid_coordinate}
   @type reply_content ::
           add_player_reply | position_island_reply | set_islands_reply | guess_coord_reply
-  @spec init(String.t()) :: {:ok, State.t()}
-  def init(name), do: {:ok, %State{player1: %Player{name: name}}}
+  @spec init(String.t()) :: {:ok, State.t(), non_neg_integer}
+  def init(name), do: {:ok, %State{player1: %Player{name: name}}, @timeout}
 
   @spec start_link(String.t()) :: GenServer.on_start()
   def start_link(name) when is_binary(name),
     do: GenServer.start_link(__MODULE__, name, name: Game.via_tuple(name))
 
-  @spec handle_call(call, any, State.t()) :: {:reply, reply_content, State.t()}
+  @spec handle_call(call, any, State.t()) :: {:reply, reply_content, State.t(), non_neg_integer}
   def handle_call({:add_player, name}, _from, state) do
     with {:ok, rules} <- Rules.check(state.rules, :add_player) do
       state |> update_player2_name(name) |> update_rules(rules) |> reply_with(:ok)
@@ -99,14 +102,20 @@ defmodule IslandsEngine.Game.Server do
     end
   end
 
+  @spec handle_info(:timeout, State.t()) :: {:stop, {:shutdown, :timeout}, State.t()}
+  def handle_info(:timeout, state) do
+    {:stop, {:shutdown, :timeout}, state}
+  end
+
   @spec update_player2_name(State.t(), String.t()) :: State.t()
   defp update_player2_name(state, name), do: put_in(state.player2.name, name)
 
   @spec update_rules(State.t(), Rules.t()) :: State.t()
   defp update_rules(state, rules), do: %State{state | rules: rules}
 
-  @spec reply_with(State.t(), reply_content) :: {:reply, reply_content, State.t()}
-  defp reply_with(state, reply), do: {:reply, reply, state}
+  @spec reply_with(State.t(), reply_content) ::
+          {:reply, reply_content, State.t(), non_neg_integer}
+  defp reply_with(state, reply), do: {:reply, reply, state, @timeout}
 
   @spec player_board(State.t(), :player1 | :player2) :: Board.t()
   defp player_board(state, player), do: Map.get(state, player).board
