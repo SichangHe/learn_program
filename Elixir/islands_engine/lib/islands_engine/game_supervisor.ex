@@ -9,7 +9,10 @@ defmodule IslandsEngine.GameSupervisor do
   def start_game(name), do: DynamicSupervisor.start_child(__MODULE__, {Game.Server, name})
 
   @spec stop_game(String.t()) :: :ok | {:error, :not_found}
-  def stop_game(name), do: DynamicSupervisor.terminate_child(__MODULE__, pid_from_name(name))
+  def stop_game(name) do
+    :ets.delete(:game_state, name)
+    DynamicSupervisor.terminate_child(__MODULE__, pid_from_name(name))
+  end
 
   @impl true
   def init(:ok), do: DynamicSupervisor.init(strategy: :one_for_one)

@@ -118,6 +118,7 @@ defmodule IslandsEngine.Game.Server do
 
   @spec handle_info(info, State.t()) :: timeout_reply
   def handle_info(:timeout, state) do
+    :ets.delete(:game_state, state.player1.name)
     {:stop, {:shutdown, :timeout}, state}
   end
 
