@@ -1,13 +1,13 @@
 defmodule IslandsInterfaceWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :islands_interface
+  use Phoenix.Endpoint, otp_app: :islands_interface_web
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_islands_interface_key",
-    signing_salt: "7aCHRYoh"
+    key: "_islands_interface_web_key",
+    signing_salt: "Ic1E4/55"
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
@@ -18,7 +18,7 @@ defmodule IslandsInterfaceWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :islands_interface,
+    from: :islands_interface_web,
     gzip: false,
     only: ~w(assets fonts images favicon.ico robots.txt)
 

@@ -6,14 +6,14 @@ import Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with esbuild to bundle .js and .css sources.
-config :islands_interface, IslandsInterfaceWeb.Endpoint,
+config :islands_interface_web, IslandsInterfaceWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "sUumpfjEh4K1V0/iR6+CLYlONuIBno3NExuKUhKIDGKSBzxx+5T3DUatcaHskcS1",
+  secret_key_base: "5TR83+bGVM767jAAgnu4o6dzPDhXt6zgNpXlOifQXORB7LM6OB+dJMIgmXy0wdj4",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
@@ -44,7 +44,7 @@ config :islands_interface, IslandsInterfaceWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :islands_interface, IslandsInterfaceWeb.Endpoint,
+config :islands_interface_web, IslandsInterfaceWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
@@ -57,9 +57,9 @@ config :islands_interface, IslandsInterfaceWeb.Endpoint,
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 
+# Initialize plugs at runtime for faster development compilation
+config :phoenix, :plug_init_mode, :runtime
+
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
-
-# Initialize plugs at runtime for faster development compilation
-config :phoenix, :plug_init_mode, :runtime
