@@ -3,7 +3,7 @@ defmodule IslandsEngine.Guesses do
   @enforce_keys [:hits, :misses]
   defstruct [:hits, :misses]
 
-  @type t :: %Guesses{hits: MapSet.t(Coordinate.t()), misses: MapSet.t(Coordinate.t)}
+  @type t :: %Guesses{hits: MapSet.t(Coordinate.t()), misses: MapSet.t(Coordinate.t())}
 
   @spec new() :: %Guesses{hits: MapSet.t(), misses: MapSet.t()}
   def new(), do: %Guesses{hits: MapSet.new(), misses: MapSet.new()}

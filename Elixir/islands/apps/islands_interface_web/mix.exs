@@ -37,7 +37,7 @@ defmodule IslandsInterfaceWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:islands_engine, path: "../islands_engine"},
+      {:islands_engine, in_umbrella: true},
       {:phoenix, "~> 1.6.15"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
