@@ -1,8 +1,10 @@
 <section class="phx-hero">
   <h1>Start a new game!</h1>
   <%= form_tag("/test") do
-    [tag(:input, type: "text", name: "name", placeholder: "Your name here"),
-    tag(:input, type: "submit", value: "New Game")]
+    [
+      tag(:input, type: "text", name: "name", placeholder: "Your name here"),
+      tag(:input, type: "submit", value: "New Game")
+    ]
   end %>
 </section>
 
@@ -17,7 +19,9 @@
         <a href="https://github.com/phoenixframework/phoenix">Source</a>
       </li>
       <li>
-        <a href="https://github.com/phoenixframework/phoenix/blob/v1.6/CHANGELOG.md">v1.6 Changelog</a>
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.6/CHANGELOG.md">
+          v1.6 Changelog
+        </a>
       </li>
     </ul>
   </article>
