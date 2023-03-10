@@ -1,6 +1,7 @@
 package com.youknowwho.firstjava;
 
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,11 @@ public class FirstFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
+        // TODO: make network requests async and remove this.
+        // Cancel strict mode to enable blocking network.
+        StrictMode.ThreadPolicy gfgPolicy =
+                new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(gfgPolicy);
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         return binding.getRoot();
