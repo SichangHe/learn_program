@@ -43,7 +43,7 @@ public class FirstFragment extends Fragment {
                         .show());
         binding.btnCount.setOnClickListener(
                 view1 -> binding.textviewFirst.setText(
-                        String.format(Locale.getDefault(), "%d", count++)));
+                        String.format(Locale.getDefault(), "%d", ++count)));
     }
 
     @Override
