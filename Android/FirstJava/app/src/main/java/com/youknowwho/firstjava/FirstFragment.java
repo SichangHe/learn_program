@@ -24,7 +24,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FirstFragment extends Fragment {
-
     Retrofit retrofit = new Retrofit
             .Builder()
             .baseUrl("https://api.github.com")
@@ -45,34 +44,19 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.btnRand.setOnClickListener(
-                view1 -> NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment));
-        binding.btnToast.setOnClickListener(view1 -> Flowable.fromCallable(() -> {
-                    GitHubService service = retrofit.create(GitHubService.class);
-                    Call<List<Contributor>> call = service.listRepo("square", "retrofit");
-                    String txt;
-                    try {
-                        List<Contributor> contributors = call.execute().body();
-                        assert contributors != null;
-                        StringBuilder txt_build = new StringBuilder();
-                        for (Contributor contributor : contributors) {
-                            txt_build.append(contributor.login).append(" (").append(contributor.contributions).append(") ");
-                        }
-                        txt = txt_build.toString();
-                    } catch (IOException e) {
-                        txt = e.toString();
-                    }
-                    return txt;
-                })
+        binding.btnRand.setOnClickListener(view1 -> NavHostFragment
+                .findNavController(FirstFragment.this)
+                .navigate(R.id.action_FirstFragment_to_SecondFragment));
+        binding.btnToast.setOnClickListener(view1 -> Flowable
+                .fromCallable(this::retrofitContributors)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(txt -> Toast.makeText(
                                         getActivity(), txt, Toast.LENGTH_LONG)
                                 .show(),
                         System.out::println));
-        binding.btnCount.setOnClickListener(
-                view1 -> binding.textviewFirst.setText(
+        binding.btnCount.setOnClickListener(view1 -> binding.textviewFirst
+                .setText(
                         String.format(Locale.getDefault(), "%d", ++count)));
     }
 
@@ -82,4 +66,24 @@ public class FirstFragment extends Fragment {
         binding = null;
     }
 
+    /*
+     * Send a GET request to GitHub for the contributors of retrofit.
+     */
+    private String retrofitContributors() {
+        GitHubService service = retrofit.create(GitHubService.class);
+        Call<List<Contributor>> call = service.listRepo("square", "retrofit");
+        String txt;
+        try {
+            List<Contributor> contributors = call.execute().body();
+            assert contributors != null;
+            StringBuilder txt_build = new StringBuilder();
+            for (Contributor contributor : contributors) {
+                txt_build.append(contributor.login).append(" (").append(contributor.contributions).append(") ");
+            }
+            txt = txt_build.toString();
+        } catch (IOException e) {
+            txt = e.toString();
+        }
+        return txt;
+    }
 }
