@@ -12,6 +12,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.youknowwho.firstjava.databinding.FragmentFirstBinding;
 
+import java.util.Locale;
+
 public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
@@ -20,7 +22,7 @@ public class FirstFragment extends Fragment {
 
     @Override
     public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
+            @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
 
@@ -34,19 +36,14 @@ public class FirstFragment extends Fragment {
 
         binding.btnRand.setOnClickListener(
                 view1 -> NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
-        );
+                        .navigate(R.id.action_FirstFragment_to_SecondFragment));
         binding.btnToast.setOnClickListener(
-                view1 -> {
-                    Toast toast = Toast.makeText(getActivity(), R.string.toast_txt, Toast.LENGTH_LONG);
-                    toast.show();
-                });
+                view1 -> Toast.makeText(
+                                getActivity(), R.string.toast_txt, Toast.LENGTH_LONG)
+                        .show());
         binding.btnCount.setOnClickListener(
-                view1 -> {
-                    count++;
-                    binding.textviewFirst.setText(String.format("%d", count));
-                }
-        );
+                view1 -> binding.textviewFirst.setText(
+                        String.format(Locale.getDefault(), "%d", count++)));
     }
 
     @Override
