@@ -7,7 +7,7 @@
     <string name="btn_rand_txt">Random</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Don\'t click</string>
+    <string name="hello_first_fragment">0</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="btn_toast_txt">Toast</string>
     <string name="btn_count_txt">Count</string>

@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".FirstFragment"
-        android:background="@color/screenBackground">
+        android:background="@color/screen_bg">
 
 
     <TextView
@@ -13,12 +13,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/hello_first_fragment"
-            android:background="@color/cardview_dark_background"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_bias="0.4"
-            android:textSize="36sp"
+            android:textSize="72sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:textAlignment="center"
@@ -32,7 +31,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview_first"
-            android:layout_marginEnd="10dp" />
+            android:layout_marginEnd="10dp"
+            android:background="@color/btn_bg" />
 
     <Button
             android:text="@string/btn_toast_txt"
@@ -42,7 +42,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview_first"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="10dp" />
+            android:layout_marginStart="10dp"
+            android:background="@color/btn_bg" />
 
     <Button
             android:text="@string/btn_count_txt"
@@ -52,5 +53,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview_first"
             app:layout_constraintEnd_toStartOf="@+id/btn_rand"
-            app:layout_constraintStart_toEndOf="@+id/btn_toast" />
+            app:layout_constraintStart_toEndOf="@+id/btn_toast"
+            android:background="@color/btn_bg" />
 </androidx.constraintlayout.widget.ConstraintLayout>
