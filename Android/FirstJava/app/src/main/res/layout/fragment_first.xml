@@ -4,20 +4,24 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".FirstFragment">
+        tools:context=".FirstFragment"
+        android:background="@color/screenBackground">
+
 
     <TextView
             android:id="@+id/textview_first"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/hello_first_fragment"
+            android:background="@color/cardview_dark_background"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/button_first"
             android:textSize="36sp"
             android:textStyle="bold"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/white"
+            android:textAlignment="center" />
 
     <Button
             android:id="@+id/button_first"
