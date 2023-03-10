@@ -12,4 +12,5 @@
     <string name="btn_toast_txt">Toast</string>
     <string name="btn_count_txt">Count</string>
     <string name="toast_txt">This is a Toast.</string>
+    <string name="tv_header_txt">Here is a random number between 0 and %d.</string>
 </resources>
