@@ -16,6 +16,8 @@ public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
 
+    private int count = 0;
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -39,6 +41,12 @@ public class FirstFragment extends Fragment {
                     Toast toast = Toast.makeText(getActivity(), R.string.toast_txt, Toast.LENGTH_LONG);
                     toast.show();
                 });
+        binding.btnCount.setOnClickListener(
+                view1 -> {
+                    count++;
+                    binding.textviewFirst.setText(String.format("%d", count));
+                }
+        );
     }
 
     @Override
