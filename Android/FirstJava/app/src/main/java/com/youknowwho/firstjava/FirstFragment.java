@@ -24,13 +24,13 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FirstFragment extends Fragment {
+    private final Counter count = new Counter(0);
     Retrofit retrofit = new Retrofit
             .Builder()
             .baseUrl("https://api.github.com")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
     private FragmentFirstBinding binding;
-    private int count = 0;
 
     @Override
     public View onCreateView(
@@ -57,7 +57,7 @@ public class FirstFragment extends Fragment {
                         System.out::println));
         binding.btnCount.setOnClickListener(view1 -> binding.textviewFirst
                 .setText(
-                        String.format(Locale.getDefault(), "%d", ++count)));
+                        String.format(Locale.getDefault(), "%d", count.increment())));
     }
 
     @Override
