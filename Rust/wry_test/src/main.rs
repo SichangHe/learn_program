@@ -10,37 +10,32 @@ use wry::{
 };
 
 const RETURN_OUTER_HTML: &str = r#"
-window.onload = function() {
-  let html = document.documentElement.outerHTML;
-  window.ipc.postMessage(html);
-}
+let html = document.documentElement.outerHTML;
+window.ipc.postMessage(html);
 "#;
 
 fn main() -> wry::Result<()> {
-    enum UserEvents {
-        CloseWindow,
-    }
-
-    let event_loop = EventLoop::<UserEvents>::with_user_event();
+    let event_loop = EventLoop::<String>::with_user_event();
 
     let window = WindowBuilder::new()
-        .with_title("Render HTML to string")
         .with_visible(false)
         .build(&event_loop)?;
 
     let html = read_to_string(canonicalize("./MY_HTML_FILE.html")?)?;
 
     let proxy = event_loop.create_proxy();
+    if let Err(err) = proxy.send_event(RETURN_OUTER_HTML.into()) {
+        eprintln!("{err} sending script.\n");
+    } else {
+        eprintln!("Sent script.\n");
+    }
 
     let handler = move |_window: &Window, html: String| {
         println!("{}", &html);
-
-        let _ = proxy.send_event(UserEvents::CloseWindow);
     };
 
-    let _webview = WebViewBuilder::new(window)?
+    let webview = WebViewBuilder::new(window)?
         .with_html(&html)?
-        .with_initialization_script(RETURN_OUTER_HTML)
         .with_ipc_handler(handler)
         .build()?;
 
@@ -48,13 +43,17 @@ fn main() -> wry::Result<()> {
         *control_flow = ControlFlow::Wait;
 
         match event {
+            Event::UserEvent(script) => {
+                if let Err(err) = webview.evaluate_script(&script) {
+                    eprintln!("{err} executing script `{script}`.\n");
+                } else {
+                    eprintln!("Executed script `{script}`\n");
+                }
+            }
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
                 ..
-            }
-            | Event::UserEvent(UserEvents::CloseWindow) => {
-                *control_flow = ControlFlow::Exit
-            }
+            } => *control_flow = ControlFlow::Exit,
             _ => (),
         }
     });
