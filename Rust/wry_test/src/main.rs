@@ -1,7 +1,9 @@
+use std::thread;
+
 use wry::{
     application::{
         event::{Event, WindowEvent},
-        event_loop::{ControlFlow, EventLoop},
+        event_loop::{ControlFlow, EventLoop, EventLoopProxy},
         window::{Window, WindowBuilder},
     },
     webview::WebViewBuilder,
@@ -19,11 +21,9 @@ fn main() -> wry::Result<()> {
         .build(&event_loop)?;
 
     let proxy = event_loop.create_proxy();
-    if let Err(err) = proxy.send_event(JS_SCRIPT.into()) {
-        eprintln!("{err} sending script.\n");
-    } else {
-        eprintln!("Sent script.\n");
-    }
+    thread::spawn(move || {
+        logic(proxy);
+    });
 
     let handler = move |_window: &Window, msg: String| {
         println!("{}", &msg);
@@ -52,4 +52,12 @@ fn main() -> wry::Result<()> {
             _ => (),
         }
     });
+}
+
+fn logic(proxy: EventLoopProxy<String>) {
+    if let Err(err) = proxy.send_event(JS_SCRIPT.into()) {
+        eprintln!("{err} sending script.\n");
+    } else {
+        eprintln!("Sent script.\n");
+    }
 }
