@@ -1,4 +1,4 @@
-use std::thread;
+use std::{io::stdin, thread};
 
 use wry::{
     application::{
@@ -26,7 +26,7 @@ fn main() -> wry::Result<()> {
     });
 
     let handler = move |_window: &Window, msg: String| {
-        println!("{}", &msg);
+        println!("Handler received `{}`", &msg);
     };
 
     let webview = WebViewBuilder::new(window)?
@@ -41,8 +41,6 @@ fn main() -> wry::Result<()> {
             Event::UserEvent(script) => {
                 if let Err(err) = webview.evaluate_script(&script) {
                     eprintln!("{err} executing script `{script}`.\n");
-                } else {
-                    eprintln!("Executed script `{script}`\n");
                 }
             }
             Event::WindowEvent {
@@ -55,9 +53,18 @@ fn main() -> wry::Result<()> {
 }
 
 fn logic(proxy: EventLoopProxy<String>) {
+    eprintln!("Example: sending {JS_SCRIPT}.");
     if let Err(err) = proxy.send_event(JS_SCRIPT.into()) {
         eprintln!("{err} sending script.\n");
-    } else {
-        eprintln!("Sent script.\n");
+    }
+    let stdin = stdin();
+    loop {
+        let mut buf = String::new();
+        if let Err(err) = stdin.read_line(&mut buf) {
+            eprintln!("{err} reading stdin.\n")
+        };
+        if let Err(err) = proxy.send_event(buf) {
+            eprintln!("{err} sending script.\n");
+        }
     }
 }
