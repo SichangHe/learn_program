@@ -1,5 +1,3 @@
-use std::fs::{canonicalize, read_to_string};
-
 use wry::{
     application::{
         event::{Event, WindowEvent},
@@ -9,9 +7,8 @@ use wry::{
     webview::WebViewBuilder,
 };
 
-const RETURN_OUTER_HTML: &str = r#"
-let html = document.documentElement.outerHTML;
-window.ipc.postMessage(html);
+const JS_SCRIPT: &str = r#"
+window.ipc.postMessage("Hi");
 "#;
 
 fn main() -> wry::Result<()> {
@@ -21,21 +18,19 @@ fn main() -> wry::Result<()> {
         .with_visible(false)
         .build(&event_loop)?;
 
-    let html = read_to_string(canonicalize("./MY_HTML_FILE.html")?)?;
-
     let proxy = event_loop.create_proxy();
-    if let Err(err) = proxy.send_event(RETURN_OUTER_HTML.into()) {
+    if let Err(err) = proxy.send_event(JS_SCRIPT.into()) {
         eprintln!("{err} sending script.\n");
     } else {
         eprintln!("Sent script.\n");
     }
 
-    let handler = move |_window: &Window, html: String| {
-        println!("{}", &html);
+    let handler = move |_window: &Window, msg: String| {
+        println!("{}", &msg);
     };
 
     let webview = WebViewBuilder::new(window)?
-        .with_html(&html)?
+        .with_html("")?
         .with_ipc_handler(handler)
         .build()?;
 
