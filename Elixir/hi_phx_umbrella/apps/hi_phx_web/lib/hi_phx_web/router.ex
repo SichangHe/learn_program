@@ -8,6 +8,8 @@ defmodule HiPhxWeb.Router do
     plug :put_root_layout, {HiPhxWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    # Append locale to connection.
+    plug HiPhxWeb.Plugs.Locale, "en"
   end
 
   pipeline :api do
