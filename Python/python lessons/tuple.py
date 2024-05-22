@@ -9,7 +9,7 @@ print(b)
 print(x, y, z)
 
 # get list of tuples with .items()
-b = {'a': 1, 'b': 2, 'c': 3}
+b = {"a": 1, "b": 2, "c": 3}
 print(b.items())
 
 # compare tuples - one by one

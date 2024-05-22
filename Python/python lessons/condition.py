@@ -5,14 +5,14 @@
 #     _
 # else:
 #     _
-a = input('type 1')
+a = input("type 1")
 if a == 1:
-    print('yes')
+    print("yes")
 else:
-    print('no')
+    print("no")
 
 # shorter version:
-print('yes' if a == 1 else 'no')
+print("yes" if a == 1 else "no")
 
 # hold the place: pass
 pass
@@ -23,7 +23,7 @@ pass
 # except:
 #     _
 try:
-    gg = int('gg')
+    gg = int("gg")
 except:
-    gg = 'gg'
+    gg = "gg"
 print(type(gg))

@@ -11,6 +11,7 @@ print(a, b)
 
 # log function
 import numpy
+
 numpy.log(a)
 
 # unpack values
@@ -29,7 +30,7 @@ print(a is b, a is not b)
 
 # boolean: and, or, not, in, not in
 print(a == b and a != b, a == b or a != b, not a == b)
-x, y = 'abc', 'bc'
+x, y = "abc", "bc"
 print(y in x, y not in x)
 
 # 按位: &, |; 移位: <<, >>

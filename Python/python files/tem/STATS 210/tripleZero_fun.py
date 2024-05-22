@@ -17,12 +17,13 @@ def trail(trails):
             count += 1
         total += count
 
-    return (total/float(trails))
+    return total / float(trails)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from time import time
+
     start = time()
     r = trail(10_000)
-    print(time()-start)
+    print(time() - start)
     print(r)

@@ -4,7 +4,7 @@ picture.py
 The picture module defines the Picture class.
 """
 
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 
 import pygame
 import sys
@@ -12,12 +12,13 @@ import color
 import stdarray
 import os
 
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 
 _DEFAULT_WIDTH = 512
 _DEFAULT_HEIGHT = 512
 
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
+
 
 class Picture:
     """
@@ -25,6 +26,7 @@ class Picture:
     it has a given width and height and contains all black pixels.
     Subsequently you can load an image from a given JPG or PNG file.
     """
+
     def __init__(self, arg1=None, arg2=None):
         """
         If both arg1 and arg2 are None, then construct self such that
@@ -52,46 +54,46 @@ class Picture:
             self._surface.fill((0, 0, 0))
         else:
             raise ValueError()
-            
-    #-------------------------------------------------------------------
 
-    #def load(self, f):
+    # -------------------------------------------------------------------
+
+    # def load(self, f):
     #    """
     #    Change self by reading from the file whose name is f. The
     #    dimensions of the read image override the dimensions specified
     #    in the constructor.
     #    """
-        #if sys.hexversion >= 0x03000000:
-        #    # Hack because Pygame without full image support
-        #    # can handle only .bmp files.
-        #    bmpFileName = f + '.bmp'
-        #    os.system('convert ' + f + ' ' + bmpFileName)
-        #    self._surface = pygame.image.load(bmpFileName)
-        #    os.system('rm ' + bmpFileName)
-        #else:
-        #    self._surface = pygame.image.load(f)
+    # if sys.hexversion >= 0x03000000:
+    #    # Hack because Pygame without full image support
+    #    # can handle only .bmp files.
+    #    bmpFileName = f + '.bmp'
+    #    os.system('convert ' + f + ' ' + bmpFileName)
+    #    self._surface = pygame.image.load(bmpFileName)
+    #    os.system('rm ' + bmpFileName)
+    # else:
+    #    self._surface = pygame.image.load(f)
 
     #    self._surface = pygame.image.load(f)
 
-    #-------------------------------------------------------------------
+    # -------------------------------------------------------------------
 
     def save(self, f):
         """
         Save self to the file whose name is f.
         """
-        #if sys.hexversion >= 0x03000000:
+        # if sys.hexversion >= 0x03000000:
         #    # Hack because Pygame without full image support
         #    # can handle only .bmp files.
         #    bmpFileName = f + '.bmp'
         #    pygame.image.save(self._surface, bmpFileName)
         #    os.system('convert ' + bmpFileName + ' ' + f)
         #    os.system('rm ' + bmpFileName)
-        #else:
+        # else:
         #    pygame.image.save(self._surface, f)
 
         pygame.image.save(self._surface, f)
 
-    #-------------------------------------------------------------------
+    # -------------------------------------------------------------------
 
     def width(self):
         """
@@ -99,7 +101,7 @@ class Picture:
         """
         return self._surface.get_width()
 
-    #-------------------------------------------------------------------
+    # -------------------------------------------------------------------
 
     def height(self):
         """
@@ -107,7 +109,7 @@ class Picture:
         """
         return self._surface.get_height()
 
-    #-------------------------------------------------------------------
+    # -------------------------------------------------------------------
 
     def get(self, x, y):
         """
@@ -116,12 +118,11 @@ class Picture:
         pygameColor = self._surface.get_at((x, y))
         return color.Color(pygameColor.r, pygameColor.g, pygameColor.b)
 
-    #-------------------------------------------------------------------
+    # -------------------------------------------------------------------
 
     def set(self, x, y, c):
         """
         Set the color of self at location (x, y) to c.
         """
-        pygameColor = pygame.Color(c.getRed(), c.getGreen(),
-           c.getBlue(), 0)
+        pygameColor = pygame.Color(c.getRed(), c.getGreen(), c.getBlue(), 0)
         self._surface.set_at((x, y), pygameColor)

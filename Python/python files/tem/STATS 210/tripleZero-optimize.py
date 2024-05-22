@@ -34,4 +34,4 @@ for trial in range(trails):
                 break
 
 
-print(float(count)/trails)
+print(float(count) / trails)

@@ -1,7 +1,7 @@
 # make set: {_, ...} or set(_)
-a = {'efe', 'ioi', 'kk'}  # no repeating
+a = {"efe", "ioi", "kk"}  # no repeating
 print(a, type(a))
-print(set(range(0, 5)), set((34, 4, 5, 5)), set([86, 8, 4]), set('bbbls'))
+print(set(range(0, 5)), set((34, 4, 5, 5)), set([86, 8, 4]), set("bbbls"))
 
 # get empty set: set()
 b = set()
@@ -23,13 +23,13 @@ print(b)
 print(b.pop(), b)
 
 # decide whether subset/superset or not: .issubset(_) or .issuperset(_)
-print(a.issubset(b), {'efe'}.issubset(a), a.issuperset(b), a.issuperset({'efe'}))
+print(a.issubset(b), {"efe"}.issubset(a), a.issuperset(b), a.issuperset({"efe"}))
 
 # no intersection: .isdisjoint(_)
 print(a.isdisjoint(b))
 
 # intersection: .intersection(_) or _&_
-c = {'o', 'ioi'}
+c = {"o", "ioi"}
 print(a.intersection(c), a & c)
 
 # union: .union(_)

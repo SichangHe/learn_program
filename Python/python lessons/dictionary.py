@@ -1,16 +1,16 @@
 # make a dictionary: dict(key=value, ...) or {key: value, ...}
 a = dict(hen=7)
-b = {'pig': 1, 'pog': 2, 'peg': 3}
+b = {"pig": 1, "pog": 2, "peg": 3}
 
 # put things into: _[key] = value
-a['pig'] = 35
+a["pig"] = 35
 print(a)
 
 # value of certain key: _[key]
-print(a['pig'])
+print(a["pig"])
 
 # get value of certain key, return something if key do not exist: .get(key, something returned)
-print(a.get('pig'), a.get('cow', 0))
+print(a.get("pig"), a.get("cow", 0))
 
 # get list from dictionary
 print(list(b), b.keys(), b.values(), b.items())
@@ -20,8 +20,8 @@ for p, q in b.items():
     print(p, q)
 
 # form dictionary with 2 list: {key: value for key, value in zip(keys, values)}
-m = ['ble', 'blu', 'bla']
-n = ['ar', 'lla', 'fa', 'ga']
+m = ["ble", "blu", "bla"]
+n = ["ar", "lla", "fa", "ga"]
 print({key: value for key, value in zip(m, n)})
 
 # sort and get list of key: sorted()
@@ -37,7 +37,7 @@ for x, y in b.items():
 print(inv)
 
 # count words
-fhand = input('the text')  # or open file
+fhand = input("the text")  # or open file
 counts = {}
 for line in fhand:
     words = line.split()

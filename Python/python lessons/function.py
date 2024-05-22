@@ -5,6 +5,8 @@ def f(x):
         return f
     except:
         return False
-print('f(x)')
-r = f(input('what is x?'))
+
+
+print("f(x)")
+r = f(input("what is x?"))
 print(r, id(r), type(r))

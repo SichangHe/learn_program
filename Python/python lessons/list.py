@@ -1,9 +1,9 @@
 # use [_,_,...,_] to make a list
-a = [10, 0.43, 'aa']
+a = [10, 0.43, "aa"]
 print(a, id(a), type(a))
 
 # use list() to make a list
-a = list([10, 0.43, 'aa'])
+a = list([10, 0.43, "aa"])
 print(a, id(a), type(a))
 
 # get single element in a list: [No.]
@@ -13,7 +13,7 @@ print(a[0], a[1], a[2], a[-1], a[-2], a[-3])
 print(a.index(0.43, 1, 3))
 
 # get part of list: [start: stop: step]
-print(a[1: 3: 1])
+print(a[1:3:1])
 
 # change element of list
 a[2] = -1
@@ -51,9 +51,9 @@ print(e)
 print(sorted(e), sorted(e, reverse=True))
 
 # turn string into list: .split(where to split)
-f = 'I ate my head'
+f = "I ate my head"
 g = f.split()
 print(g)
 
 # form list with function: [f(i) for i in _]
-print([i**i for i in range(1,11)])
+print([i**i for i in range(1, 11)])

@@ -5,19 +5,19 @@ i = 0
 while i < 3:
     print(i)
     i += 1
-print('-------------------------------------------')
+print("-------------------------------------------")
 # use for
 # for _ in _:
 #     _
-for a in 'space':
+for a in "space":
     print(a)
-print('--------------------------------------------')
+print("--------------------------------------------")
 i = 0
 for a in range(3):
     print(i)
     i += 1
 # stop circle: break
-print('--------------------------------------------')
+print("--------------------------------------------")
 i = 0
 for a in range(8):
     print(i)
@@ -25,7 +25,7 @@ for a in range(8):
         break
     i += 1
 # go back to the beginning of circle: continue
-print('--------------------------------------------')
+print("--------------------------------------------")
 i = 0
 for a in range(6):
     print(i)
