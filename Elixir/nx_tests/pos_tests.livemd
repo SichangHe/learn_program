@@ -1,0 +1,133 @@
+# PoS
+
+```elixir
+Mix.install(
+  [
+    {:kino_bumblebee, "~> 0.5.0"},
+    {:exla, ">= 0.0.0"}
+  ],
+  config: [nx: [default_backend: EXLA.Backend]]
+)
+```
+
+## Stock model is large and slow
+
+```elixir
+{:ok, model_info} =
+  Bumblebee.load_model({:hf, "vblagoje/bert-english-uncased-finetuned-pos"})
+```
+
+```elixir
+{:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "google-bert/bert-base-uncased"})
+
+serving =
+  Bumblebee.Text.token_classification(model_info, tokenizer,
+    aggregation: :same,
+    compile: [batch_size: 16, sequence_length: 500],
+    defn_options: [compiler: EXLA]
+  )
+```
+
+```elixir
+text_input =
+  Kino.Input.textarea("Text",
+    default:
+      "Elixir is a dynamic, functional language for building scalable and maintainable applications."
+  )
+
+form = Kino.Control.form([text: text_input], submit: "Run")
+frame = Kino.Frame.new()
+
+Kino.listen(form, fn %{data: %{text: text}} ->
+  Kino.Frame.render(frame, Kino.Text.new("Running..."))
+  output = Nx.Serving.run(serving, text)
+  Kino.Frame.render(frame, Kino.Bumblebee.HighlightedText.new(text, output.entities))
+end)
+
+Kino.Layout.grid([form, frame], boxed: true, gap: 16)
+```
+
+```elixir
+text = "Extracts Part of Speech tags (Noun, Verb, Adjective…) from text. A lightweight pretrained model using MobileBERT is available for English."
+{time_ms, output} = :timer.tc(fn -> Nx.Serving.run(serving, text) end)
+```
+
+## Distill BERT is half the size and time
+
+```elixir
+{:ok, model_info} =
+  Bumblebee.load_model({:hf, "tbosse/distilbert-base-uncased-finetuned-pos"})
+
+{:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "tbosse/distilbert-base-uncased-finetuned-pos"})
+
+serving =
+  Bumblebee.Text.token_classification(model_info, tokenizer,
+    aggregation: :same,
+    compile: [batch_size: 16, sequence_length: 500],
+    defn_options: [compiler: EXLA]
+  )
+```
+
+```elixir
+text_input =
+  Kino.Input.textarea("Text",
+    default:
+      "Elixir is a dynamic, functional language for building scalable and maintainable applications."
+  )
+
+form = Kino.Control.form([text: text_input], submit: "Run")
+frame = Kino.Frame.new()
+
+Kino.listen(form, fn %{data: %{text: text}} ->
+  Kino.Frame.render(frame, Kino.Text.new("Running..."))
+  output = Nx.Serving.run(serving, text)
+  Kino.Frame.render(frame, Kino.Bumblebee.HighlightedText.new(text, output.entities))
+end)
+
+Kino.Layout.grid([form, frame], boxed: true, gap: 16)
+```
+
+```elixir
+text = "Extracts Part of Speech tags (Noun, Verb, Adjective…) from text. A lightweight pretrained model using MobileBERT is available for English."
+{time_ms, output} = :timer.tc(fn -> Nx.Serving.run(serving, text) end)
+```
+
+## ALBERT is much smaller but as slow as stock model
+
+```elixir
+{:ok, model_info} =
+  Bumblebee.load_model({:hf, "oom-debugger/Albert-finetuned-pos"})
+
+{:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "oom-debugger/Albert-finetuned-pos"})
+
+serving =
+  Bumblebee.Text.token_classification(model_info, tokenizer,
+    aggregation: :same,
+    compile: [batch_size: 16, sequence_length: 500],
+    defn_options: [compiler: EXLA]
+  )
+```
+
+```elixir
+text_input =
+  Kino.Input.textarea("Text",
+    default:
+      "Elixir is a dynamic, functional language for building scalable and maintainable applications."
+  )
+
+form = Kino.Control.form([text: text_input], submit: "Run")
+frame = Kino.Frame.new()
+
+Kino.listen(form, fn %{data: %{text: text}} ->
+  Kino.Frame.render(frame, Kino.Text.new("Running..."))
+  output = Nx.Serving.run(serving, text)
+  Kino.Frame.render(frame, Kino.Bumblebee.HighlightedText.new(text, output.entities))
+end)
+
+Kino.Layout.grid([form, frame], boxed: true, gap: 16)
+```
+
+```elixir
+text = "Extracts Part of Speech tags (Noun, Verb, Adjective…) from text. A lightweight pretrained model using MobileBERT is available for English."
+{time_ms, output} = :timer.tc(fn -> Nx.Serving.run(serving, text) end)
+```
