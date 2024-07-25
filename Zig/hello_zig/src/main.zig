@@ -50,3 +50,14 @@ test "compile-time array" {
     const eq = std.mem.eql(usize, &array, &[_]usize{ 0, 1, 2, 3, 4, 5, 6, 7 });
     try std.testing.expect(eq);
 }
+
+test "tuple" {
+    const values = .{
+        @as(u32, 1234),
+        @as(f64, 12.34),
+        true,
+        "hi",
+    } ++ .{false} ** 2;
+    try std.testing.expect(values[5] == false);
+    std.debug.print("Tuple type is: {}", .{@TypeOf(values)});
+}
